@@ -35,7 +35,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_RAISE] = LAYOUT(KC_GRV, RGB_HUI, RGB_SAI, RGB_VAI, RGB_SPI, KC_UNDS, KC_EQL, KC_LEFT, KC_UP, KC_DOWN, KC_RIGHT, KC_PSCR, RGB_TOG, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_0, KC_QUOT, RGB_M_P, RGB_HUD, KC_MPLY, KC_MPRV, KC_MNXT, KC_MINS, KC_PLUS, KC_DEL, KC_TRNS, KC_TRNS, KC_TRNS, TG(3), KC_LSFT, KC_SPC, MO(1), KC_TRNS, KC_BSPC, KC_ENT),
 
-    [_GAMING] = LAYOUT(KC_ESC, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_0, KC_PSCR, KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_QUOT, KC_LSFT, KC_A, KC_S, KC_D, KC_F, KC_G, KC_Z, KC_X, KC_C, KC_V, KC_B, TG(3), KC_LALT, KC_SPC, MO(2), MO(4), KC_BSPC, KC_ENT),
+    [_GAMING] = LAYOUT(KC_ESC, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_0, KC_PSCR, KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_QUOT, KC_LSFT, KC_A, KC_S, KC_D, KC_F, KC_G, KC_Z, KC_X, KC_C, KC_V, KC_B, TG(3), KC_LALT, KC_SPC, MO(4), MO(2), KC_BSPC, KC_ENT),
 
     [_GAMINGRAISE] = LAYOUT(KC_TRNS, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_P, KC_O, KC_I, KC_U, KC_Y, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_SCLN, KC_L, KC_K, KC_J, KC_H, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
 };
@@ -56,10 +56,9 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 }
 
 static void render_status(void) {
-    // Host Keyboard Layer Status
     switch (get_highest_layer(layer_state)) {
         case _BASE:
-            oled_write_P(PSTR("Base"), false);
+            oled_write_P(PSTR("Base "), false);
             break;
         case _LOWER:
             oled_write_P(PSTR("Lower"), false);
@@ -68,10 +67,10 @@ static void render_status(void) {
             oled_write_P(PSTR("Raise"), false);
             break;
         case _GAMING:
-            oled_write_P(PSTR("Game"), false);
+            oled_write_P(PSTR("Game "), false);
             break;
         case _GAMINGRAISE:
-            oled_write_P(PSTR("Game"), false);
+            oled_write_P(PSTR("Game+"), false);
             break;
         default:
             oled_write_P(PSTR("Undefined"), false);
@@ -475,7 +474,7 @@ static void render_anim(void) {
     }
 }
 
-void render_samurai(void) {
+void render_logo(void) {
     static const char PROGMEM samurai[] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0xfc, 0xfe, 
 		0xfe, 0x3f, 0x1f, 0x0f, 0x1f, 0x3e, 0xfe, 0xfe, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -504,8 +503,9 @@ void render_samurai(void) {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3e, 0x3e, 0x3e, 0x3e, 0x3e, 0x3e, 0x3e, 0x3e, 
 		0x3e, 0x30, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 	};
-	oled_write_P(samurai, false);
+    oled_write_raw_P(samurai, 416);
 }
+
 
 void oled_task_user(void) {
     if (is_master) {
@@ -515,7 +515,7 @@ void oled_task_user(void) {
         oled_write(wpm_str, false);
     } 
 	if (!is_master) {
-		render_samurai();
+		render_logo();
         oled_set_cursor(0,14);
         render_status();
 	}
