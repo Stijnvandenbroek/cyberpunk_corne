@@ -1,18 +1,3 @@
-/* Copyright 2019 Thomas Baart <thomas@splitkb.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 #include QMK_KEYBOARD_H
 #include <stdio.h>
 bool is_alt_tab_active = false;
@@ -31,7 +16,7 @@ enum layers {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_BASE] = LAYOUT(KC_GESC, KC_Q, KC_W, KC_F, KC_P, KC_B, KC_J, KC_L, KC_U, KC_Y, KC_SCLN, KC_BSLS, KC_TAB, KC_A, KC_R, KC_S, KC_T, KC_G, KC_M, KC_N, KC_E, KC_I, KC_O, KC_QUOT, KC_LCTL, KC_Z, KC_X, KC_C, KC_D, KC_V, KC_K, KC_H, KC_COMM, KC_DOT, KC_SLSH, KC_LGUI, KC_LSFT, KC_SPC, MO(1), MO(2), KC_BSPC, KC_ENT),
 
-    [_LOWER] = LAYOUT(KC_GESC, KC_F1, KC_F2, KC_F3, KC_F4, KC_PERC, KC_NLCK, KC_P7, KC_P8, KC_P9, KC_PMNS, KC_BSLS, RGB_HUI, KC_F5, KC_F6, KC_F7, KC_F8, KC_LCBR, KC_RCBR, KC_P4, KC_P5, KC_P6, KC_PPLS, KC_QUOT, KC_CAPS, KC_F9, KC_F10, KC_F11, KC_F12, KC_LBRC, KC_RBRC, KC_P1, KC_P2, KC_P3, KC_PEQL, KC_LGUI, KC_LALT, KC_SPC, KC_TRNS, MO(2), KC_BSPC, KC_P0),
+    [_LOWER] = LAYOUT(KC_GESC, KC_F1, KC_F2, KC_F3, KC_F4, KC_PERC, KC_NLCK, KC_P7, KC_P8, KC_P9, KC_PMNS, KC_BSLS, KC_TAB, KC_F5, KC_F6, KC_F7, KC_F8, KC_LCBR, KC_RCBR, KC_P4, KC_P5, KC_P6, KC_PPLS, KC_QUOT, KC_CAPS, KC_F9, KC_F10, KC_F11, KC_F12, KC_LBRC, KC_RBRC, KC_P1, KC_P2, KC_P3, KC_PEQL, KC_LGUI, KC_LALT, KC_SPC, KC_TRNS, MO(2), KC_BSPC, KC_P0),
 
     [_RAISE] = LAYOUT(KC_GRV, RGB_HUI, RGB_SAI, RGB_VAI, RGB_SPI, KC_UNDS, KC_EQL, KC_LEFT, KC_UP, KC_DOWN, KC_RIGHT, KC_PSCR, RGB_TOG, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_0, KC_QUOT, RGB_M_P, RGB_HUD, KC_MPLY, KC_MPRV, KC_MNXT, KC_MINS, KC_PLUS, KC_DEL, KC_TRNS, KC_TRNS, KC_TRNS, TG(3), KC_LSFT, KC_SPC, MO(1), KC_TRNS, KC_BSPC, KC_ENT),
 
@@ -41,7 +26,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 
-//I didn't write most of the code below, all credit goes to u/Pop-X- who I copied the initial code from.
+//I didn't write most of the code below, all credit goes to u/Pop-X- whom I copied the initial code from.
 
 #ifdef OLED_DRIVER_ENABLE
 
@@ -55,22 +40,56 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
   return rotation;
 }
 
+//all icons for the layer states
+void render_nothing(void) {
+    static const char PROGMEM nothing[] = {
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+	};
+    oled_write_raw_P(nothing, 96);
+}
+void render_gaming(void) {
+    static const char PROGMEM gaming[] = {
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0xf0, 0xfc, 0xfe, 0xee, 0xc7, 0x6f, 0x3f, 0x3f, 0x6f, 0xf9, 
+		0xf9, 0xef, 0x7f, 0x3f, 0x6f, 0xd7, 0xee, 0xfe, 0xfc, 0xf0, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x78, 0xff, 0xff, 0xff, 0x7f, 0x1f, 0x0f, 0x0e, 0x0c, 0x0c, 0x0e, 0x0f, 
+		0x0f, 0x0f, 0x0f, 0x0e, 0x0f, 0x0f, 0x1f, 0x7f, 0xff, 0xff, 0xff, 0x70, 0x00, 0x00, 0x00, 0x00
+	};
+    oled_write_raw_P(gaming, 96);
+}
+void render_gamingraise(void) {
+    static const char PROGMEM gamingraise[] = {
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x08, 0x0c, 0x06, 0x0c, 0x08, 0x80, 0xf0, 0xfc, 0xfe, 0xee, 0xc7, 0x6f, 0x3f, 0x3f, 0x6f, 0xf9, 
+		0xf9, 0xef, 0x7f, 0x3f, 0x6f, 0xd7, 0xee, 0xfe, 0xfc, 0xf0, 0x80, 0x08, 0x0c, 0x06, 0x0c, 0x08, 
+		0x00, 0x00, 0x00, 0x00, 0x78, 0xff, 0xff, 0xff, 0x7f, 0x1f, 0x0f, 0x0e, 0x0c, 0x0c, 0x0e, 0x0f, 
+		0x0f, 0x0f, 0x0f, 0x0e, 0x0f, 0x0f, 0x1f, 0x7f, 0xff, 0xff, 0xff, 0x70, 0x00, 0x00, 0x00, 0x00
+	};
+    oled_write_raw_P(gamingraise, 96);
+}
 static void render_status(void) {
     switch (get_highest_layer(layer_state)) {
         case _BASE:
-            oled_write_P(PSTR("Base "), false);
+			render_nothing();
             break;
         case _LOWER:
-            oled_write_P(PSTR("Lower"), false);
+			render_nothing();
             break;
         case _RAISE:
-            oled_write_P(PSTR("Raise"), false);
+			render_nothing();
             break;
         case _GAMING:
-            oled_write_P(PSTR("Game "), false);
+            render_gaming();
             break;
         case _GAMINGRAISE:
-            oled_write_P(PSTR("Game+"), false);
+            render_gamingraise();
             break;
         default:
             oled_write_P(PSTR("Undefined"), false);
@@ -514,10 +533,11 @@ void oled_task_user(void) {
 		sprintf(wpm_str, "WPM  %03d", get_current_wpm());
         oled_write(wpm_str, false);
     } 
-	if (!is_master) {
+	if (!is_master) {		
 		render_logo();
-        oled_set_cursor(0,14);
+		oled_set_cursor(0,13);
         render_status();
+
 	}
 }
 #endif
